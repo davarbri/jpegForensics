@@ -1,11 +1,21 @@
+# !/usr/bin/python3
+# RSA_keys.py
+# David Arboledas Brihuega
+# December 2021
+# usage: pythom RSA_keys.py
+# --------------------------------------------
 # This Python script creates two files:
 # private.pem 
 # public.pem
 # with 2048-bit public-private RSA keypairs
+# --------------------------------------------
+
 
 from Crypto.PublicKey import RSA
-# Generate 2048 bits keys
+
+# Generate 2048-bit RSA keypairs
 key = RSA.generate(2048)
+
 # Private key
 private_key = key.export_key()
 try:
