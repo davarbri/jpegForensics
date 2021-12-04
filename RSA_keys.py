@@ -1,3 +1,8 @@
+# This Python script creates two files:
+# private.pem 
+# public.pem
+# with 2048-bit public-private RSA keypairs
+
 from Crypto.PublicKey import RSA
 # Generate 2048 bits keys
 key = RSA.generate(2048)
