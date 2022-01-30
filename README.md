@@ -15,9 +15,9 @@ Simply run the next command to install the library:
 --------------------------------------------------------------------
 SCRIPTS
 ##########
-1. Creating the 2048-bit RSA key pair
+1. Creating n-bit RSA key pair (n = 1024, 2048 or 4096)
 
-python RSA_keys.py
+python RSA_keys.py n
 
 After you run the command, you will then have two files
 (private.pem, public.pem) with the RSA key pair in PEM format
@@ -55,6 +55,6 @@ Model For Digital Image Authentication"
 ---------------------------------------------------------------
 
 COMMANDS SUMMARY
-python RSA_keys.py
+python RSA_keys.py <n-bits length>
 python IMobileJPEG.py <jpeg_file>
 python extractForensicJPEG.py <jpeg_file or directory>
