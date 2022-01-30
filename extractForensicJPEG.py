@@ -18,7 +18,6 @@ def main():
     extraction.numberFile = 0
     dir = sys.argv[1]
     head, tail = os.path.split(dir)
-
     try:  # Is a directory
         content = os.listdir(dir)
         # Gets a list with all JPEG files on dir
@@ -28,20 +27,18 @@ def main():
                 os.path.isfile(os.path.join(dir, file)) and
                 (file.endswith('.jpg') or file.endswith('.JPG'))
             ):
-                print("file ", dir + '\\'+file)
                 JPEG_pics.append(file)
                 totalFile += 1  # Number of JPEG files on dir
         # Calls extraction.py with every JPEG file recursively
         for file in JPEG_pics:
             fileNumber += 1
             extraction.readingData(
-                dir + '\\'+file, 0, fileNumber, totalFile)  # 0 mode means directory
+                file, 0, fileNumber, totalFile)  # 0 mode means directory
 
     except NotADirectoryError:  # Is a file
         fileName = tail
-        #print("Fichero ", dir)
         extraction.readingData(
-            head + '\\'+ tail, mode=1,
+            fileName, mode=1,
             fileNumber=1,
             totalFile=1)  # 1 means only a file
 

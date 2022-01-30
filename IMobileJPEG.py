@@ -45,7 +45,7 @@ def main():
                     with open(final_image, 'wb') as primary_image:
                         # IMEI + original JPEG MD5 hash string signed
                         # with IMobile's private RSA key
-                        RSA_signature = signing_RSA(IMEI + MD5)
+                        (key_length, RSA_signature) = signing_RSA(IMEI + MD5)
                         # JPEG_file is written with forensic data
                         # injecting IMEI + MD5 + RSA signature
                         primary_image.write(
@@ -55,7 +55,7 @@ def main():
                                 IMEI + MD5 + RSA_signature))
                         print("[+] Adding IMEI...", IMEI)
                         print("[+] Adding MD5...", MD5)
-                        print("[+] IMobile signature written.")
+                        print("[+] IMobile", key_length, "bits signature written.")
                         primary_image.close()
                 except IOError:
                     msg = "Unable to create file " + primary_image + " on disk"
@@ -97,7 +97,8 @@ def signing_RSA(data):
     # Gets the hexadecimal representation of the binary data.
     signature = binascii.hexlify(signature)
     # returns byte signature as Unicode string
-    return signature.decode("utf-8")
+    
+    return (key.n.bit_length(),signature.decode("utf-8"))
 
 
 def find_jpeg_last_trailer_index(
@@ -121,7 +122,7 @@ def inject_forensic_data(
 
     # gets the original JPEG data until 0xFFD9
     original_data = vector[:index + len(BIN_TRAILER_EOF)]
-
+ #   print("forensic data: ", bin_forensic_data)
     # and returns the original JPEG stamped with
     # forensic data
     return (original_data + bin_forensic_data)

@@ -20,12 +20,24 @@ TRAILER_EOF = "ffd9"
 BIN_TRAILER_NUMBER = binascii.unhexlify(TRAILER_EOF)
 IMEI_LENGTH = 15
 HASH_LENGTH = 32
-RSA_SIGNATURE_LENGTH = 256  # 2048 bits
-FORENSIC_DATA_LENGTH = IMEI_LENGTH + HASH_LENGTH + RSA_SIGNATURE_LENGTH
+#FORENSIC_DATA_LENGTH = IMEI_LENGTH + HASH_LENGTH + RSA_hex_length()
 
 primaryPics = []
 
 
+def RSA_hex_length():
+    try:
+        with open('public.pem', 'rb') as f:
+            key = RSA.importKey(f.read())
+            f.close()
+            return key.n.bit_length() / 4 # hex digits length
+    except FileNotFoundError:
+        msg = (
+            "Sorry, Public Key file public.pem does not exist."
+            "\nIt can't be verified!")
+        print(msg)
+        
+        
 def readingData(file, mode, fileNumber, totalFile):
     # Gets a 'stamped' JPEG file
     temporary_image = file
@@ -83,7 +95,6 @@ def extract_forensic_data(
     # vector: JPEG image
     # index: last 0xFFD9 offset
     forensic_data = vector[index + len(BIN_TRAILER_NUMBER):].decode()
-
     # IMEI string recorded
     IMEI = forensic_data[:IMEI_LENGTH]
     # MDstring recorded
@@ -93,7 +104,8 @@ def extract_forensic_data(
 
     # RSA signature saved
     RSA_signature = forensic_data[IMEI_LENGTH + HASH_LENGTH:]
-
+    
+    FORENSIC_DATA_LENGTH = IMEI_LENGTH + HASH_LENGTH + RSA_hex_length()
     if len(forensic_data) != FORENSIC_DATA_LENGTH:
 
         if len(forensic_data) == 0:  # There are no data
@@ -120,8 +132,8 @@ def extract_forensic_data(
                     writeLogFile(primaryPics)
     else:  # Forensic data length is OK
         print("   [+] Found IMEI: ", IMEI)
-        print("   [+] Found written MD5: ", MD5_hash)
-        print("   [+] Found JPEG MD5: ", fileMD5)
+        print("   [+] Found MD5: ", MD5_hash)
+        print("   [+] Calculated hash: ", fileMD5)
         print("   [+] Found RSA signature: ", RSA_signature)
         verify_signature(
             IMEI, fileMD5, RSA_signature, MD5_hash, file,
